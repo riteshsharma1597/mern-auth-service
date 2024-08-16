@@ -10,8 +10,8 @@ export default tseslint.config(
     {
         rules: {
             // semi: ['error', 'never']
-            'no-console':['error'],
-            'dot-notation':['error']
+            'no-console': ['error'],
+            'dot-notation': ['error'],
         },
     },
 );

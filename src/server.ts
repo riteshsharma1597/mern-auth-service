@@ -1,6 +1,6 @@
-function login(username: string): boolean {
- console.log(username);
- return true;
+function login(username: string): string {
+    console.log(username);
+    return username;
 }
 
-login("ritesh");
+login('ritesh');

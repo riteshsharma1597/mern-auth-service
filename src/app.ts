@@ -9,6 +9,8 @@ app.get('/', (req, res) => {
     res.send('Welcome to Auth Service');
 });
 
+app.use(express.json());
+
 app.use('/auth', authRouter);
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

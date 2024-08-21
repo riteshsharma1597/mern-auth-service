@@ -2,6 +2,7 @@ import { NextFunction, Response } from 'express';
 import { RegisterUserRequest } from '../types';
 import { UserService } from '../services/UserService';
 import { Logger } from 'winston';
+import { validationResult } from 'express-validator';
 
 //You can use Functional Based here class based component bcoz grouping is possible easily
 export class AuthController {
@@ -18,7 +19,19 @@ export class AuthController {
         res: Response,
         next: NextFunction,
     ) {
+        //Validation
+        const result = validationResult(req);
+        if (!result.isEmpty()) {
+            return res.status(400).json({ errors: result.array() });
+        }
+
         const { firstName, lastName, email, password } = req.body;
+
+        // if (!email) {
+        //     const error = createHttpError(400, 'Email is required');
+        //     // throw error;
+        //     next(error);
+        // }
         this.logger.debug('New request to register a user', {
             firstName,
             lastName,

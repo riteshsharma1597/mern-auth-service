@@ -38,7 +38,6 @@ export class AuthController {
             email,
             password: '*********',
         });
-        console.log(req.body);
         try {
             const user = await this.userService.create({
                 firstName,

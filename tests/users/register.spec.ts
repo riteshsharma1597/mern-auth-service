@@ -72,11 +72,9 @@ describe('POST /auth/register', () => {
             };
             //Act
             await request(app).post('/auth/register').send(userData);
-            // console.log(response);
             //Assert
             const userRepository = connection.getRepository(User);
             const users = await userRepository.find();
-            console.log(users);
             expect(users).toHaveLength(1);
             expect(users[0].firstName).toBe(userData.firstName);
             expect(users[0].lastName).toBe(userData.lastName);
@@ -98,7 +96,6 @@ describe('POST /auth/register', () => {
                 .post('/auth/register')
                 .send(userData);
 
-            console.log(response.body);
             expect(response.body).toHaveProperty('id');
         });
         it('should assign a customer role', async () => {
@@ -111,11 +108,7 @@ describe('POST /auth/register', () => {
                 password: 'secret',
             };
             //Act
-            const response = await request(app)
-                .post('/auth/register')
-                .send(userData);
-
-            console.log(response.body);
+            await request(app).post('/auth/register').send(userData);
 
             //Assert
             const userRepository = connection.getRepository(User);
@@ -132,11 +125,7 @@ describe('POST /auth/register', () => {
                 password: 'secret',
             };
             //Act
-            const response = await request(app)
-                .post('/auth/register')
-                .send(userData);
-
-            console.log(response.body);
+            await request(app).post('/auth/register').send(userData);
 
             //Assert
 
@@ -164,7 +153,6 @@ describe('POST /auth/register', () => {
                 .post('/auth/register')
                 .send(userData);
 
-            console.log(response.body);
             //Assert
             expect(response.statusCode).toBe(400);
 
@@ -189,12 +177,31 @@ describe('POST /auth/register', () => {
                 .post('/auth/register')
                 .send(userData);
 
-            console.log(response.body);
             //Assert
             expect(response.statusCode).toBe(400);
             const userRepository = connection.getRepository(User);
             const users = await userRepository.find();
             expect(users).toHaveLength(0);
+        });
+    });
+    describe('Fields are not in proper format', () => {
+        it('should trim the email field', async () => {
+            //Arrange
+            const userData = {
+                firstName: 'Ankush',
+                lastName: 'Sharma',
+                email: ' riteshbbn74@gmail.com ',
+                password: 'secret',
+            };
+
+            //Act
+            await request(app).post('/auth/register').send(userData);
+
+            //Assert
+            const userRepository = connection.getRepository(User);
+            const users = await userRepository.find();
+            const user = users[0];
+            expect(user.email).toBe('riteshbbn74@gmail.com');
         });
     });
 });

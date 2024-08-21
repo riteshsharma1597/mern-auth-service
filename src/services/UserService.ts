@@ -12,7 +12,6 @@ export class UserService {
             where: { email: email },
         });
         if (user) {
-            console.log(user);
             const error = createHttpError(400, 'Email is already exist');
             throw error;
         }
@@ -28,8 +27,8 @@ export class UserService {
                 password: hashedPassword,
                 role: Roles.CUSTOMER,
             });
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (err) {
-            console.log(err);
             const error = createHttpError(
                 500,
                 'Failed to store the data in Database',

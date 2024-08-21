@@ -21,6 +21,8 @@ export class AuthController {
     ) {
         //Validation
         const result = validationResult(req);
+        // eslint-disable-next-line no-console
+        console.log(result);
         if (!result.isEmpty()) {
             return res.status(400).json({ errors: result.array() });
         }
@@ -32,6 +34,13 @@ export class AuthController {
         //     // throw error;
         //     next(error);
         // }
+
+        // if (!firstName) {
+        //     const error = createHttpError(400, 'First Name is required');
+        //     // throw error;
+        //     next(error);
+        // }
+
         this.logger.debug('New request to register a user', {
             firstName,
             lastName,

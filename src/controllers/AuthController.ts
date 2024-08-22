@@ -1,21 +1,22 @@
-import fs from 'fs';
-import path from 'path';
 import { NextFunction, Response } from 'express';
 import { RegisterUserRequest } from '../types';
 import { UserService } from '../services/UserService';
 import { Logger } from 'winston';
 import { validationResult } from 'express-validator';
-import { JwtPayload, sign } from 'jsonwebtoken';
-import createHttpError from 'http-errors';
-import { Config } from '../config';
+import { JwtPayload } from 'jsonwebtoken';
+import { AppDataSource } from '../config/data-source';
+import { RefreshToken } from '../entity/RefreshToken';
+import { TokenService } from '../services/TokenService';
 
 //You can use Functional Based here class based component bcoz grouping is possible easily
 export class AuthController {
     constructor(
         private userService: UserService,
         private logger: Logger,
+        private tokenService: TokenService,
     ) {
         this.userService = userService;
+        this.tokenService = tokenService;
         // this.register = this.register.bind(this);
     }
 
@@ -58,36 +59,34 @@ export class AuthController {
                 password,
             });
             this.logger.info('User has been registered successfully');
-            let privateKey: Buffer;
-            try {
-                privateKey = fs.readFileSync(
-                    path.join(__dirname, '../../certs/private.pem'),
-                );
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            } catch (err) {
-                const error = createHttpError(
-                    500,
-                    'Error while reading private key',
-                );
-                next(error);
-                return;
-            }
 
             const payload: JwtPayload = {
                 sub: String(user.id),
                 role: user.role,
             };
-            const accessToken = sign(payload, privateKey, {
-                algorithm: 'RS256',
-                expiresIn: '1h',
-                issuer: 'auth-service',
+
+            const accessToken = this.tokenService.generateAccessToken(payload);
+
+            //Persist the refresh Token
+            const MS_IN_YEAR = 100 * 60 * 60 * 24 * 365; //1y-> (Leap year)
+
+            const refreshTokenRepository =
+                AppDataSource.getRepository(RefreshToken);
+            const newRefreshToken = await refreshTokenRepository.save({
+                user: user,
+                expiresAt: new Date(Date.now() + MS_IN_YEAR),
             });
             //Payload can be different
             //secret key must be strong , isko ham get karenge .env se
-            const refreshToken = sign(payload, Config.REFRESH_TOKEN_SECRET!, {
-                algorithm: 'HS256',
-                expiresIn: '1y',
-                issuer: 'auth-service',
+            // const refreshToken = sign(payload, Config.REFRESH_TOKEN_SECRET!, {
+            //     algorithm: 'HS256',
+            //     expiresIn: '1y',
+            //     issuer: 'auth-service',
+            //     jwtid: String(newRefreshToken.id),
+            // });
+            const refreshToken = this.tokenService.generateRefreshToken({
+                ...payload,
+                id: String(newRefreshToken.id),
             });
 
             res.cookie('accessToken', accessToken, {

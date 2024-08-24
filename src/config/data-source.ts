@@ -13,8 +13,7 @@ export const AppDataSource = new DataSource({
     database: Config.DB_NAME,
     //Don't use this in production, Always keep false
 
-    // synchronize: Config.NODE_ENV === 'test' || Config.NODE_ENV === 'dev',
-    synchronize: true,
+    synchronize: Config.NODE_ENV === 'test' || Config.NODE_ENV === 'dev',
     logging: false,
     entities: [User, RefreshToken],
     migrations: [],

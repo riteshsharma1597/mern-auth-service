@@ -199,6 +199,6 @@ export class AuthController {
         //Now query into db for (req.auth.id) and return the user data
         const id = Number(req.auth.sub);
         const userData = await this.userService.findById(id);
-        return res.json(userData);
+        return res.json({ ...userData, password: undefined });
     }
 }

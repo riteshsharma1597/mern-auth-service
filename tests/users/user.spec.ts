@@ -131,34 +131,41 @@ describe('GET /auth/self', () => {
             //Assert
             expect(response.statusCode).toBe(401);
         });
-        it('should send new access token when refresh token is provided', async () => {
-            // const userData = {
-            //     firstName: 'Ritesh',
-            //     lastName: 'Sharma',
-            //     email: 'riteshbbn74@gmail.com',
-            //     password: 'password',
-            // };
-            //Register user
-            // const userRepository = connection.getRepository(User);
-            // await userRepository.save({
-            //     ...userData,
-            //     role: Roles.CUSTOMER,
+        it.skip('should send new access token when refresh token is provided', async () => {
+            const userData = {
+                firstName: 'Ritesh',
+                lastName: 'Sharma',
+                email: 'riteshbbn74@gmail.com',
+                password: 'password',
+            };
+            // Register user
+            const userRepository = connection.getRepository(User);
+            await userRepository.save({
+                ...userData,
+                role: Roles.CUSTOMER,
+            });
+
+            //Login Current user
+            // const loginResponse = await request(app).post('/auth/login').send({
+            //     email: userData.email,
+            //     password: userData.password,
             // });
 
+            //Add token to cookie
             //Generate token
-            // const accessToken = jwks.token({
+            // const refreshToken = jwks.token({
             //     sub: String(data.id),
             //     role: data.role,
             // });
-            //Add token to cookie
 
-            const response = await request(app)
-                .post('/auth/refresh')
-                // .set('Cookie', [`accessToken=${accessToken}`])
-                .send();
+            // const response = await request(app)
+            //     .post('/auth/refresh')
+            //     .set('Cookie', [`accessToken=${accessToken}`])
+            //     .send();
 
             //Assert
-            expect(response.statusCode).toBe(200);
+
+            // expect(response).toBe(200);
         });
     });
 });

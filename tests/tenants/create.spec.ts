@@ -88,5 +88,29 @@ describe('POST /tenants', () => {
             expect(response.statusCode).toBe(401);
         });
     });
+    it('should return 403 if user is not an admin', async () => {
+        //Arrange
+        const tenantData = {
+            name: 'Jagdeesh Restaurants',
+            address: 'Babhnan, Market , Basti',
+        };
+        const managerToken = jwks.token({
+            sub: '1',
+            role: Roles.MANAGER,
+        });
+
+        //Act
+        const response = await request(app)
+            .post('/tenants')
+            .set('Cookie', [`accessToken=${managerToken}`])
+            .send(tenantData);
+
+        const tenantRepository = connection.getRepository(Tenant);
+        const tenants = await tenantRepository.find();
+
+        expect(response.statusCode).toBe(403);
+
+        expect(tenants).toHaveLength(0);
+    });
     describe('Fields are missing', () => {});
 });

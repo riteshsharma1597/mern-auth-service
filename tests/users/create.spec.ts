@@ -35,9 +35,10 @@ describe('POST /users', () => {
             const userData = {
                 firstName: 'Ritesh',
                 lastName: 'Sharma',
-                email: 'riteshbbn74@gmail.com',
+                email: 'riteshbbn74+100@gmail.com',
                 password: 'password',
                 tenantId: 1,
+                role: Roles.MANAGER,
             };
 
             const adminToken = jwks.token({
@@ -50,7 +51,6 @@ describe('POST /users', () => {
                 .post('/users')
                 .set('Cookie', [`accessToken=${adminToken}`])
                 .send(userData);
-
             const userRepository = connection.getRepository(User);
             const users = await userRepository.find();
 
@@ -65,6 +65,7 @@ describe('POST /users', () => {
                 email: 'riteshbbn74@gmail.com',
                 password: 'password',
                 tenantId: 1,
+                role: Roles.MANAGER,
             };
 
             const adminToken = jwks.token({

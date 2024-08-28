@@ -36,9 +36,17 @@ export class UserService {
         }
     }
 
-    async findByEmail(email: string) {
+    async findByEmailWithPassword(email: string) {
         const user = await this.userRepository.findOne({
             where: { email: email },
+            select: [
+                'id',
+                'firstName',
+                'lastName',
+                'email',
+                'role',
+                'password',
+            ],
         });
 
         return user;
@@ -49,5 +57,26 @@ export class UserService {
             where: { id: id },
         });
         return user;
+    }
+
+    async update(
+        id: number,
+        userData: { firstName: string; lastName: string; role: string },
+    ) {
+        return await this.userRepository.update(id, userData);
+    }
+
+    async deleteById(userId: number) {
+        return await this.userRepository.delete(userId);
+    }
+
+    async getAll() {
+        return await this.userRepository.find();
+    }
+
+    async getById(userId: number) {
+        return await this.userRepository.findOne({
+            where: { id: userId },
+        });
     }
 }

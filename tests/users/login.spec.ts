@@ -91,7 +91,6 @@ describe('POST /auth/login', () => {
                 .send({ email: userData.email, password: 'wrongPassword' });
 
             // Assert
-
             expect(response.statusCode).toBe(400);
         });
     });

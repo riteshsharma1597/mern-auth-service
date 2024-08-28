@@ -4,6 +4,7 @@
     "description": "A user management service",
     "main": "index.js",
     "scripts": {
+        "build":"tsc",
         "dev": "cross-env NODE_ENV=dev nodemon src/server.ts --legacy-watch",
         "format:check": "prettier . --check",
         "format:fix": "prettier . --write",

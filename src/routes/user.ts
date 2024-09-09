@@ -9,6 +9,7 @@ import { User } from '../entity/User';
 import createUserValidator from '../validators/create-user-validator';
 import logger from '../config/logger';
 import updateUserValidator from '../validators/update-user-validator';
+import listUsersValidator from '../validators/list-users-validator';
 
 const router = express.Router();
 const userRepository = AppDataSource.getRepository(User);
@@ -40,12 +41,21 @@ router.delete(
         userController.destroy(req, res, next),
 );
 
-router.get('/', (req: Request, res: Response, next: NextFunction) =>
-    userController.getAll(req, res, next),
+router.get(
+    '/',
+    authenticate,
+    canAcces([Roles.ADMIN]),
+    listUsersValidator,
+    (req: Request, res: Response, next: NextFunction) =>
+        userController.getAll(req, res, next),
 );
 
-router.get('/:id', (req: Request, res: Response, next: NextFunction) =>
-    userController.getOne(req, res, next),
+router.get(
+    '/:id',
+    authenticate,
+    canAcces([Roles.ADMIN]),
+    (req: Request, res: Response, next: NextFunction) =>
+        userController.getOne(req, res, next),
 );
 
 export default router;

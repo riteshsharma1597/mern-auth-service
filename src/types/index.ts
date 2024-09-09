@@ -25,3 +25,8 @@ export interface ITenant {
     name: string;
     address: string;
 }
+
+export interface UserQueryParams {
+    perPage: number;
+    currentPage: number;
+}

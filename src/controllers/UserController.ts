@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import { UserService } from '../services/UserService';
-import { Roles } from '../constants';
-import { validationResult } from 'express-validator';
+import { matchedData, validationResult } from 'express-validator';
 import { Logger } from 'winston';
 import createHttpError from 'http-errors';
+import { UserQueryParams } from '../types';
 
 export class UserController {
     constructor(
@@ -17,14 +17,14 @@ export class UserController {
             return res.status(400).json({ errors: result.array() });
         }
 
-        const { firstName, lastName, email, password } = req.body;
+        const { firstName, lastName, email, password, role } = req.body;
         try {
             const user = await this.userService.create({
                 firstName,
                 lastName,
                 email,
                 password,
-                role: Roles.MANAGER,
+                role: role,
             });
             res.status(201).json({ id: user.id });
         } catch (error) {
@@ -33,11 +33,20 @@ export class UserController {
         }
     }
     async getAll(req: Request, res: Response, next: NextFunction) {
+        const validatedQuery = matchedData(req, { onlyValidData: true });
+
         try {
-            const users = await this.userService.getAll();
+            const [users, count] = await this.userService.getAll(
+                validatedQuery as UserQueryParams,
+            );
             this.logger.info('All users have been fetched');
 
-            res.status(200).json(users);
+            res.status(200).json({
+                currentPage: validatedQuery.currentPage,
+                perPage: validatedQuery.perPage,
+                total: count,
+                data: users,
+            });
         } catch (error) {
             next(error);
             return;

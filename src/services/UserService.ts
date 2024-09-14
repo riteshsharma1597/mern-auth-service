@@ -6,7 +6,14 @@ import bcrypt from 'bcrypt';
 export class UserService {
     constructor(private userRepository: Repository<User>) {}
 
-    async create({ firstName, lastName, email, password, role }: UserData) {
+    async create({
+        firstName,
+        lastName,
+        email,
+        password,
+        role,
+        tenantId,
+    }: UserData) {
         const user = await this.userRepository.findOne({
             where: { email: email },
         });
@@ -25,6 +32,7 @@ export class UserService {
                 email,
                 password: hashedPassword,
                 role: role,
+                tenant: tenantId ? { id: tenantId } : undefined,
             });
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (err) {
@@ -64,7 +72,13 @@ export class UserService {
 
     async update(
         id: number,
-        userData: { firstName: string; lastName: string; role: string },
+        userData: {
+            firstName: string;
+            lastName: string;
+            role: string;
+            email: string;
+            tenantId: number;
+        },
     ) {
         return await this.userRepository.update(id, userData);
     }
@@ -97,6 +111,7 @@ export class UserService {
         }
 
         const result = await queryBuilder
+            .leftJoinAndSelect('user.tenant', 'tenant')
             .skip((validatedQuery.currentPage - 1) * validatedQuery.perPage)
             .take(validatedQuery.perPage)
             .orderBy('user.id', 'DESC')

@@ -17,14 +17,16 @@ export class UserController {
             return res.status(400).json({ errors: result.array() });
         }
 
-        const { firstName, lastName, email, password, role } = req.body;
+        const { firstName, lastName, email, password, tenantId, role } =
+            req.body;
         try {
             const user = await this.userService.create({
                 firstName,
                 lastName,
                 email,
                 password,
-                role: role,
+                role,
+                tenantId,
             });
             res.status(201).json({ id: user.id });
         } catch (error) {
@@ -82,7 +84,7 @@ export class UserController {
             return res.status(400).json({ errors: result.array() });
         }
 
-        const { firstName, lastName, role } = req.body;
+        const { firstName, lastName, role, email, tenantId } = req.body;
         const userId = req.params.id;
 
         if (isNaN(Number(userId))) {
@@ -95,6 +97,8 @@ export class UserController {
                 firstName,
                 lastName,
                 role,
+                email,
+                tenantId,
             });
             res.json({ id: Number(userId) });
         } catch (error) {

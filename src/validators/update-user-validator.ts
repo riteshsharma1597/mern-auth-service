@@ -16,4 +16,9 @@ export default checkSchema({
         notEmpty: true,
         trim: true,
     },
+    tenantId: {
+        notEmpty: true,
+        errorMessage: 'Role is required!',
+        trim: true,
+    },
 });

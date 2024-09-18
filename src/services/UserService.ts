@@ -72,15 +72,24 @@ export class UserService {
 
     async update(
         id: number,
-        userData: {
+        {
+            firstName,
+            lastName,
+            role,
+            tenantId,
+        }: {
             firstName: string;
             lastName: string;
             role: string;
-            email: string;
             tenantId: number;
         },
     ) {
-        return await this.userRepository.update(id, userData);
+        return await this.userRepository.update(id, {
+            firstName,
+            lastName,
+            role,
+            tenant: tenantId ? { id: tenantId } : undefined,
+        });
     }
 
     async deleteById(userId: number) {

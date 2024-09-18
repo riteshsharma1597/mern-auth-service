@@ -84,7 +84,7 @@ export class UserController {
             return res.status(400).json({ errors: result.array() });
         }
 
-        const { firstName, lastName, role, email, tenantId } = req.body;
+        const { firstName, lastName, role, tenantId } = req.body;
         const userId = req.params.id;
 
         if (isNaN(Number(userId))) {
@@ -97,7 +97,6 @@ export class UserController {
                 firstName,
                 lastName,
                 role,
-                email,
                 tenantId,
             });
             res.json({ id: Number(userId) });

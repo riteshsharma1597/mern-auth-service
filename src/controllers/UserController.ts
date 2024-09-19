@@ -14,7 +14,8 @@ export class UserController {
         //Validation
         const result = validationResult(req);
         if (!result.isEmpty()) {
-            return res.status(400).json({ errors: result.array() });
+            return next(createHttpError(400, result.array()[0].msg));
+            // return res.status(400).json({ errors: result.array() });
         }
 
         const { firstName, lastName, email, password, tenantId, role } =
@@ -81,7 +82,9 @@ export class UserController {
     async update(req: Request, res: Response, next: NextFunction) {
         const result = validationResult(req);
         if (!result.isEmpty()) {
-            return res.status(400).json({ errors: result.array() });
+            return next(createHttpError(400, result.array()[0].msg as string));
+
+            // return res.status(400).json({ errors: result.array() });
         }
 
         const { firstName, lastName, role, tenantId } = req.body;
